@@ -26,7 +26,7 @@ public class CrimeLab {
         }
     }
 
-    public List<Crime> getCrims(){
+    public List<Crime> getCrimes(){
         return mCrimes;
     }
 
