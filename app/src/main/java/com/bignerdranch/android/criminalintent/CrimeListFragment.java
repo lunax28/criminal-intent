@@ -21,6 +21,8 @@ public class CrimeListFragment extends Fragment {
 
     private RecyclerView mCrimeRecyclerView;//628
     private CrimeAdapter mAdapter;
+    private int mLastUpdatedPosition = -1; //Challenge: Efficient RecyclerView Reloading
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -45,11 +47,16 @@ public class CrimeListFragment extends Fragment {
         /*mAdapter = new CrimeAdapter(crimes);
         mCrimeRecyclerView.setAdapter(mAdapter);*/
 
-        if(mAdapter == null){
+        if (mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
-        } else{
-            mAdapter.notifyDataSetChanged();
+        } else {
+            if (mLastUpdatedPosition > -1) {
+                mAdapter.notifyItemChanged(mLastUpdatedPosition);
+                mLastUpdatedPosition = -1;
+            } else {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -81,7 +88,12 @@ public class CrimeListFragment extends Fragment {
             /*Toast.makeText(getActivity(),mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
                     .show();*/
             //Intent intent = new Intent(getActivity(),CrimeActivity.class);
+
+            //Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            //startActivity(intent);
+
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            mLastUpdatedPosition = this.getAdapterPosition(); //Challenge: Efficient RecyclerView Reloading
             startActivity(intent);
 
         }
