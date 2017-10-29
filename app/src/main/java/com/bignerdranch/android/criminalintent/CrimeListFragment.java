@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,10 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
 
+    private static final int REQUEST_CODE_CHANGE = 0;
     private RecyclerView mCrimeRecyclerView;//628
     private CrimeAdapter mAdapter;
+    private int positionChange;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -49,7 +52,7 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else{
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(positionChange);
         }
     }
 
@@ -82,7 +85,8 @@ public class CrimeListFragment extends Fragment {
                     .show();*/
             //Intent intent = new Intent(getActivity(),CrimeActivity.class);
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(intent);
+            //startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE_CHANGE);
 
         }
     }
@@ -111,5 +115,22 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
             return mCrimes.size();
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+
+        if(requestCode == REQUEST_CODE_CHANGE){
+            if(data == null){
+                return;
+            }
+            positionChange = CrimeFragment.changePosition(data);
+        }
+
+
     }
 }

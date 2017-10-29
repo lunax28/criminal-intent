@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,6 +26,9 @@ import static android.widget.CompoundButton.*;
 public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id"; // page 210
+
+    private static final String EXTRA_CHANGE =
+            "com.bignerdranch.android.criminalintent.extra_change";
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -66,6 +71,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                returnResult(true);
 
             }
 
@@ -86,9 +92,20 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                returnResult(true);
             }
         });
 
         return v;
+    }
+
+    public void returnResult(boolean isChanged){
+        Intent data = new Intent();
+        data.putExtra(EXTRA_CHANGE, CrimeLab.get(getActivity()).getCrimes().indexOf(mCrime));
+        getActivity().setResult(Activity.RESULT_OK, data);
+    }
+
+    public static int changePosition (Intent result){
+        return result.getIntExtra(EXTRA_CHANGE, 0);
     }
 }
