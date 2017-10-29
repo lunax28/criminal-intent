@@ -1,6 +1,5 @@
 package com.bignerdranch.android.criminalintent;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,10 +19,10 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
 
-    private static final int REQUEST_CODE_CHANGE = 0;
+    private int mLastUpdatedPosition = -1; //Challenge: Efficient RecyclerView Reloading
     private RecyclerView mCrimeRecyclerView;//628
     private CrimeAdapter mAdapter;
-    private int positionChange;
+    //private int positionChange;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -48,11 +47,16 @@ public class CrimeListFragment extends Fragment {
         /*mAdapter = new CrimeAdapter(crimes);
         mCrimeRecyclerView.setAdapter(mAdapter);*/
 
-        if(mAdapter == null){
+        if (mAdapter == null) {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
-        } else{
-            mAdapter.notifyItemChanged(positionChange);
+        } else {
+            if (mLastUpdatedPosition > -1) {
+                mAdapter.notifyItemChanged(mLastUpdatedPosition);
+                mLastUpdatedPosition = -1;
+            } else {
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -84,9 +88,14 @@ public class CrimeListFragment extends Fragment {
             /*Toast.makeText(getActivity(),mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT)
                     .show();*/
             //Intent intent = new Intent(getActivity(),CrimeActivity.class);
-            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+
+            //Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
             //startActivity(intent);
-            startActivityForResult(intent, REQUEST_CODE_CHANGE);
+            //startActivityForResult(intent, REQUEST_CODE_CHANGE);
+
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            mLastUpdatedPosition = this.getAdapterPosition(); //Challenge: Efficient RecyclerView Reloading
+            startActivity(intent);
 
         }
     }
@@ -117,7 +126,7 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
-    @Override
+/*    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode != Activity.RESULT_OK){
@@ -132,5 +141,5 @@ public class CrimeListFragment extends Fragment {
         }
 
 
-    }
+    }*/
 }
