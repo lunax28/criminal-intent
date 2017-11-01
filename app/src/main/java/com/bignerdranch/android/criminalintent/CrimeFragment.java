@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,7 +16,7 @@ import android.widget.EditText;
 
 import java.util.UUID;
 
-import static android.widget.CompoundButton.*;
+import static android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Created by albus on 20-Oct-17.
@@ -29,6 +30,7 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mLastButton;
 
     public static CrimeFragment newInstance(UUID crimeId){
         Bundle args = new Bundle();
@@ -86,6 +88,19 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+            }
+        });
+
+        mLastButton = (Button) v.findViewById(R.id.last_button);
+        mLastButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                ViewPager mViewPager = (ViewPager)getActivity().findViewById(R.id.crime_view_pager);
+                mViewPager.setCurrentItem(CrimeLab.get(getActivity()).getCrimes().size()-1);
+
+                //it breaks encapsulation though
+
             }
         });
 
