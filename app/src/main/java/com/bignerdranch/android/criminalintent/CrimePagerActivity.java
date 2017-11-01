@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,11 +30,15 @@ public class CrimePagerActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
+    private Button mFirstButton;
+    private Button mLastButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
+
+
 
         UUID crimeId = (UUID) getIntent()
                 .getSerializableExtra(EXTRA_CRIME_ID);
@@ -63,5 +69,22 @@ public class CrimePagerActivity extends AppCompatActivity {
                 break;
             }
         }
+
+        mFirstButton = (Button) findViewById(R.id.first_button);
+        mLastButton = (Button) findViewById(R.id.last_button);
+
+        mFirstButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(0); //CrimeLab.get(CrimePagerActivity.this).getCrimes().size()-1
+            }
+        });
+
+        mLastButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(CrimeLab.get(CrimePagerActivity.this).getCrimes().size()-1);
+            }
+        });
     }
 }
