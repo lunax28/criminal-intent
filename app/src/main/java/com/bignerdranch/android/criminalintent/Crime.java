@@ -16,6 +16,12 @@ public class Crime {
     private Calendar mTime;
     private boolean mSolved;
 
+    public Crime(){
+        mId = UUID.randomUUID();
+        mDate = new Date();
+    }
+
+
     public UUID getId() {
         return mId;
     }
@@ -43,11 +49,6 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         mSolved = solved;
-    }
-
-    public Crime(){
-        mId = UUID.randomUUID();
-        mDate = new Date();
     }
 
     public void setTime(Calendar time) {

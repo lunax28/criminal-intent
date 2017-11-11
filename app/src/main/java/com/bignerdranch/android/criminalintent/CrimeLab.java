@@ -51,4 +51,13 @@ public class CrimeLab {
     public void addCrime(Crime c){
         mCrimes.add(c);
     }
+
+    public void deleteCrime(Crime crime) {
+
+        for(Crime cri : mCrimes){
+            if(cri.getId() == crime.getId()){
+                mCrimes.remove(mCrimes.indexOf(crime));
+            }
+        }
+    }
 }
