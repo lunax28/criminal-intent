@@ -144,6 +144,7 @@ public class CrimeFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.delete_crime:
                 Crime crime = new Crime();
+
                 CrimeLab.get(getActivity()).deleteCrime(mCrime);
                 getActivity().finish();
 
@@ -180,5 +181,13 @@ public class CrimeFragment extends Fragment {
 
     private void updateTime() {
         mTimeButton.setText(mCrime.getTimeString());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        CrimeLab.get(getActivity())
+                .updateCrime(mCrime);
     }
 }
