@@ -19,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -169,9 +168,9 @@ public class CrimeFragment extends Fragment {
         }
 
         if (requestCode == REQUEST_TIME) {
-            Calendar time = (Calendar) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
-            mCrime.setTime(time);
-            updateTime();
+            Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
+            mCrime.setDate(date);
+            updateDate();
         }
     }
 
@@ -179,9 +178,6 @@ public class CrimeFragment extends Fragment {
         mDateButton.setText(mCrime.getDate().toString());
     }
 
-    private void updateTime() {
-        mTimeButton.setText(mCrime.getTimeString());
-    }
 
     @Override
     public void onPause() {

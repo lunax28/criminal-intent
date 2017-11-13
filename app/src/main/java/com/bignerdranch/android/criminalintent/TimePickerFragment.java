@@ -14,7 +14,6 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by albus on 05-Nov-17.
@@ -28,6 +27,8 @@ public class TimePickerFragment extends DialogFragment {
 
     private TimePicker mTimePicker;
 
+    private Date mDate;
+
     public static TimePickerFragment newInstance(Date date){
         Bundle args = new Bundle();
         args.putSerializable(ARG_DATE, date);
@@ -38,12 +39,10 @@ public class TimePickerFragment extends DialogFragment {
     }
 
 
-
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Date date = (Date) getArguments().getSerializable(ARG_DATE);
+        mDate = (Date) getArguments().getSerializable(ARG_DATE);
 
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_time,null);
@@ -52,11 +51,11 @@ public class TimePickerFragment extends DialogFragment {
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setTitle(R.string.date_picker_title)
+                .setTitle("TIME OF CRIME")
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        int hour = 0;
+                        /*int hour = 0;
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                             hour = mTimePicker.getHour();
                         }else{
@@ -72,20 +71,37 @@ public class TimePickerFragment extends DialogFragment {
 
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(date);
-                        sendResult(Activity.RESULT_OK,cal);
+                        sendResult(Activity.RESULT_OK,cal);*/
+
+                        Calendar cal = Calendar.getInstance();
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            cal.set(Calendar.HOUR_OF_DAY,mTimePicker.getHour());
+                            cal.set(Calendar.MINUTE,mTimePicker.getMinute());
+                            cal.set(Calendar.SECOND,0);
+                            cal.set(Calendar.MILLISECOND,0);
+                        }else{
+                            cal.set(Calendar.HOUR_OF_DAY,mTimePicker.getCurrentHour());
+                            cal.set(Calendar.MINUTE,mTimePicker.getCurrentMinute());
+                            cal.set(Calendar.SECOND,0);
+                            cal.set(Calendar.MILLISECOND,0);
+                        }
+                        mDate = cal.getTime();
+
+                        sendResult(Activity.RESULT_OK,mDate);
 
                     }
                 })
                 .create();
     }
 
-    private void sendResult(int resultCode, Calendar cal) {
+    private void sendResult(int resultCode, Date date) {
         if(getTargetFragment() == null){
             return;
         }
 
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_TIME,cal);
+        intent.putExtra(EXTRA_TIME,date);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode,intent);
     }
