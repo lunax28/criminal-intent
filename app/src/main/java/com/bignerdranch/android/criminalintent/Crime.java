@@ -15,6 +15,15 @@ public class Crime {
     private Date mDate;
     private Calendar mTime;
     private boolean mSolved;
+    private String mSuspect;
+
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
+    }
 
     public Crime() {
         this(UUID.randomUUID());
@@ -61,6 +70,10 @@ public class Crime {
     }
     public String getTimeString() {
         return android.text.format.DateFormat.format("hh:mm a", mTime).toString();
+    }
+
+    public String getPhotoFilename(){
+        return "IMG_"+ getId().toString() + ".jpg";
     }
 
 }
