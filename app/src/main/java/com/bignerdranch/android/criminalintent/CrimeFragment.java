@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
@@ -51,7 +53,7 @@ public class CrimeFragment extends Fragment {
 
     private static final int REQUEST_CONTACT = 2;
     private static final int REQUEST_PHOTO = 3;
-    private static final String DIALOG_ZOOM = "DialogZoom" ;
+    private static final String DIALOG_ZOOM = "DialogZoom";
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -63,6 +65,11 @@ public class CrimeFragment extends Fragment {
     private File mPhotoFile;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+    }
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -104,11 +111,13 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                updateCrime();
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                updateCrime();
 
             }
         });
@@ -214,6 +223,7 @@ public class CrimeFragment extends Fragment {
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
                 ZoomFragment dialog = ZoomFragment.newInstance(mPhotoFile);
+                dialog.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
                 dialog.show(manager, DIALOG_ZOOM);
 
             }
@@ -252,6 +262,7 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE || requestCode == REQUEST_TIME) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            updateCrime();
             updateDate();
 
         } else if (requestCode == REQUEST_CONTACT && data != null) {
@@ -275,6 +286,8 @@ public class CrimeFragment extends Fragment {
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
+                updateCrime();
+
                 mSuspectButton.setText(suspect);
             } finally {
                 c.close();
@@ -286,6 +299,7 @@ public class CrimeFragment extends Fragment {
 
             getActivity().revokeUriPermission(uri,
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            updateCrime();
 
             updatePhotoView();
         }
@@ -332,5 +346,23 @@ public class CrimeFragment extends Fragment {
                     mPhotoFile.getPath(), getActivity());
             mPhotoView.setImageBitmap(bitmap);
         }
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 }
