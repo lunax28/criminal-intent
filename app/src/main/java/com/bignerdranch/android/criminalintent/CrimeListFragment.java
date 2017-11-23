@@ -39,11 +39,11 @@ public class CrimeListFragment extends Fragment {
     private Callbacks mCallbacks;
     private OnDeleteCrimeListener mDeleteCalLBack;
 
+    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+
     public interface OnDeleteCrimeListener {
         void onCrimeIdSelected(UUID crimeId);
     }
-
-    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     public interface Callbacks {
         void onCrimeSelected(Crime crime);
@@ -283,7 +283,7 @@ public class CrimeListFragment extends Fragment {
 
     public void setCrimeRecyclerViewItemTouchListener() {
 
-        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT |ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
